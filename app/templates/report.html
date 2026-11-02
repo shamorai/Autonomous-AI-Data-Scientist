@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Executive Data Science Report</title>
+    <style>
+        body { font-family: Arial, Helvetica, sans-serif; margin: 40px; color: #1e293b; background: #ffffff; }
+        .header { border-bottom: 3px solid #3b82f6; padding-bottom: 12px; margin-bottom: 24px; }
+        h1 { color: #0f172a; margin: 0; font-size: 24px; }
+        .subtitle { color: #64748b; font-size: 14px; margin-top: 4px; }
+        .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+        .label { font-weight: bold; color: #475569; width: 120px; display: inline-block; }
+        .code-box { background: #0f172a; color: #38bdf8; padding: 14px; border-radius: 6px; font-family: monospace; font-size: 11px; white-space: pre-wrap; word-wrap: break-word; }
+        .logs-box { background: #1e293b; color: #4ade80; padding: 14px; border-radius: 6px; font-family: monospace; font-size: 11px; white-space: pre-wrap; word-wrap: break-word; }
+        .img-container { margin: 15px 0; text-align: center; }
+        .viz-img { max-width: 100%; height: auto; border: 1px solid #cbd5e1; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Autonomous AI Data Scientist Report</h1>
+        <div class="subtitle">Executive Execution & Model Diagnostic Summary</div>
+    </div>
+
+    <div class="card">
+        <p><span class="label">Dataset:</span> {{ filename | default('N/A') }}</p>
+        <p><span class="label">Query Target:</span> {{ question | default('N/A') }}</p>
+    </div>
+
+    <!-- Embedded Base64 Visualizations -->
+    <h2>Generated Visualizations & Diagnostics</h2>
+    {% if images %}
+        {% for img_b64 in images %}
+        <div class="img-container">
+            <img src="data:image/png;base64,{{ img_b64 }}" class="viz-img" alt="Visualization Plot">
+        </div>
+        {% endfor %}
+    {% else %}
+        <p style="font-size: 12px; color: #64748b; font-style: italic;">No embedded visualizations generated.</p>
+    {% endif %}
+
+    <h2>Generated Python Execution Code</h2>
+    <div class="code-box">{{ generated_code | default('# No code executed.') }}</div>
+
+    <h2>Execution Logs & Metrics</h2>
+    <div class="logs-box">{{ execution_output | default('# No execution logs available.') }}</div>
+</body>
+</html>

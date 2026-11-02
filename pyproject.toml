@@ -1,0 +1,25 @@
+[project]
+name = "autonomous-data-scientist"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Dev Upadhyay", email = "upadhayaydev758@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "e2b-code-interpreter>=2.11.3",
+    "fastapi>=0.162.0",
+    "pandas>=3.1.0",
+    "polars>=2.1.0",
+    "pydantic>=2.14.1",
+    "python-dotenv>=1.2.4",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+autonomous-data-scientist = "autonomous_data_scientist:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"

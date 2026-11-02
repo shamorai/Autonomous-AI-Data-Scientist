@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous AI Data Scientist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="border-b border-slate-800 pb-6 mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-extrabold text-blue-400">Autonomous AI Data Scientist</h1>
+                <p class="text-slate-400 text-sm mt-1">Engineered with FastAPI, LangGraph & E2B Sandboxes</p>
+            </div>
+            <span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-500/20">
+                Engine Ready
+            </span>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Panel -->
+            <div class="space-y-6">
+                <!-- Upload Section -->
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <h2 class="text-lg font-bold mb-4 text-slate-200">1. Upload Dataset</h2>
+                    <input type="file" id="csvFile" accept=".csv" class="hidden" onchange="uploadCSV()">
+                    <label for="csvFile" class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-slate-600 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                        <p class="text-sm text-slate-400" id="uploadLabel">Click to upload CSV</p>
+                    </label>
+                </div>
+
+                <!-- Query Section -->
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+                    <h2 class="text-lg font-bold text-slate-200">2. Business Query</h2>
+                    <textarea id="queryInput" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500" placeholder="e.g. Profiling metrics & correlations..."></textarea>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="runWorkflow()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">Run Workflow</button>
+                        <button onclick="trainAutoML()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">Train AutoML</button>
+                    </div>
+                </div>
+            </div>
+
+           
+                   <div class="lg:col-span-2 bg-slate-800 p-6 rounded-xl border border-slate-700">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold text-slate-200">Execution Console</h2>
+        <span id="statusBadge" class="text-xs px-2 py-1 rounded bg-slate-700 text-slate-300">Idle</span>
+    </div>
+    <div class="space-y-4">
+        <div>
+            <!-- Header Row with Download Action Buttons -->
+            <div class="flex justify-between items-center mb-1">
+                <p class="text-xs text-slate-400">Generated Python Code:</p>
+                <div class="flex gap-2">
+                    <button onclick="downloadCode('python')" class="px-2 py-0.5 text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 rounded border border-slate-600 transition flex items-center gap-1 cursor-pointer">
+                        <span>💾 .py</span>
+                    </button>
+                    <button onclick="downloadCode('notebook')" class="px-2 py-0.5 text-xs bg-indigo-700 hover:bg-indigo-600 text-white rounded border border-indigo-500 transition flex items-center gap-1 cursor-pointer">
+                        <span>📓 .ipynb</span>
+                    </button>
+                    <!-- NEW: Download Executive PDF Report Button -->
+                     <button onclick="downloadPdfReport()" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-xs text-white font-medium rounded shadow flex items-center gap-1">
+                         <span>📄 Export Report</span>
+                     </button>
+                </div>
+            </div>
+            <pre id="codeOutput" class="bg-slate-950 p-4 rounded text-xs font-mono text-blue-300 border border-slate-800 min-h-[100px]"># Code output will display here...</pre>
+        </div>
+        <div>
+            <p class="text-xs text-slate-400 mb-1">E2B Sandbox Logs:</p>
+            <pre id="logsOutput" class="bg-slate-950 p-4 rounded text-xs font-mono text-emerald-400 border border-slate-800 min-h-[150px]"># Execution logs will display here...</pre>
+        </div> 
+
+
+                    <!-- Visualizations / Charts Container -->
+                   <div id="visualizationCard" class="hidden mt-4">
+                   <label class="block text-sm font-medium text-slate-300 mb-2">Generated Visualizations:</label>
+                   <div id="chartContainer" class="p-4 bg-slate-900/90 border border-slate-700/60 rounded-lg flex flex-col items-center justify-center gap-4">
+                   <!-- Rendered Images Will Appear Here -->
+                  </div>
+                 </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+    let currentFilename = "";
+
+    // Upload CSV Function
+    async function uploadCSV() {
+        const fileInput = document.getElementById("csvFile");
+        if (!fileInput.files[0]) return;
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        document.getElementById("uploadLabel").innerText = "Uploading...";
+        
+        try {
+            const res = await fetch("/api/profile", { method: "POST", body: formData });
+            if (res.ok) {
+                const data = await res.json();
+                currentFilename = data.filename;
+                document.getElementById("uploadLabel").innerText = `Active: ${data.filename}`;
+            } else {
+                alert("Upload failed.");
+                document.getElementById("uploadLabel").innerText = "Click to upload CSV";
+            }
+        } catch (err) {
+            alert("Server error during upload.");
+            document.getElementById("uploadLabel").innerText = "Click to upload CSV";
+        }
+    }
+
+    // Run Workflow Request
+    async function runWorkflow() {
+        if (!currentFilename) return alert("Upload a CSV dataset first!");
+        const question = document.getElementById("queryInput").value;
+        const statusBadge = document.getElementById("statusBadge");
+        
+        statusBadge.innerText = "Running LangGraph...";
+        statusBadge.className = "text-xs px-2 py-1 rounded bg-amber-500/20 text-amber-300";
+
+        const formData = new FormData();
+        formData.append("filename", currentFilename);
+        formData.append("question", question);
+
+        try {
+            const res = await fetch("/api/workflow/run", { method: "POST", body: formData });
+            const data = await res.json();
+
+            if (res.ok) {
+                statusBadge.innerText = "Execution Complete";
+                statusBadge.className = "text-xs px-2 py-1 rounded bg-emerald-500/20 text-emerald-400";
+                // Route through common visualization & log handler
+                handleApiResponse(data);
+            } else {
+                statusBadge.innerText = "Execution Failed";
+                statusBadge.className = "text-xs px-2 py-1 rounded bg-rose-500/20 text-rose-400";
+                document.getElementById("logsOutput").innerText = data.detail || data.error || "Workflow failed.";
+            }
+        } catch (err) {
+            document.getElementById("logsOutput").innerText = "Workflow Error: " + err.message;
+            statusBadge.innerText = "Execution Failed";
+            statusBadge.className = "text-xs px-2 py-1 rounded bg-rose-500/20 text-rose-400";
+        }
+    }
+
+    // Train AutoML Request
+    async function trainAutoML() {
+        if (!currentFilename) return alert("Upload a CSV dataset first!");
+        const question = document.getElementById("queryInput").value;
+        const statusBadge = document.getElementById("statusBadge");
+
+        statusBadge.innerText = "Training Model...";
+        statusBadge.className = "text-xs px-2 py-1 rounded bg-indigo-500/20 text-indigo-300";
+
+        const formData = new FormData();
+        formData.append("filename", currentFilename);
+        formData.append("question", question);
+
+        try {
+            const res = await fetch("/api/ml/train", { method: "POST", body: formData });
+            const data = await res.json();
+
+            if (res.ok) {
+                statusBadge.innerText = "Training Complete";
+                statusBadge.className = "text-xs px-2 py-1 rounded bg-emerald-500/20 text-emerald-400";
+                // Route through common visualization & log handler
+                handleApiResponse(data);
+            } else {
+                statusBadge.innerText = "Training Failed";
+                statusBadge.className = "text-xs px-2 py-1 rounded bg-rose-500/20 text-rose-400";
+                document.getElementById("logsOutput").innerText = data.detail || data.error || "AutoML training failed.";
+            }
+        } catch (err) {
+            document.getElementById("logsOutput").innerText = "AutoML Training Error: " + err.message;
+            statusBadge.innerText = "Training Failed";
+            statusBadge.className = "text-xs px-2 py-1 rounded bg-rose-500/20 text-rose-400";
+        }
+    }
+
+
+
+// Unified API Response Handler (Renders Code, Plain Logs & Base64 Plot Images)
+function handleApiResponse(data) {
+    const codeOutput = document.getElementById('codeOutput');
+    const logsOutput = document.getElementById('logsOutput');
+    const chartContainer = document.getElementById('chartContainer');
+    const visualizationCard = document.getElementById('visualizationCard');
+
+    // 1. Display Generated Python Code
+    if (codeOutput) {
+        codeOutput.innerText = data.code || data.generated_code || data.python_code || "# No code generated.";
+    }
+
+    // Clear previous charts
+    if (chartContainer) chartContainer.innerHTML = '';
+    let hasImage = false;
+    let cleanLogs = [];
+
+    // Extract raw output string or array from any payload structure
+    let rawLogsText = "";
+    if (data.stdout) {
+        rawLogsText = Array.isArray(data.stdout) ? data.stdout.join('\n') : String(data.stdout);
+    } else if (data.execution_output) {
+        rawLogsText = Array.isArray(data.execution_output) ? data.execution_output.join('\n') : String(data.execution_output);
+    } else if (data.logs) {
+        rawLogsText = Array.isArray(data.logs) ? data.logs.join('\n') : String(data.logs);
+    }
+
+    // 2. Parse Line-by-Line to split Base64 Images & Clean Logs
+    const lines = rawLogsText.split('\n');
+    lines.forEach(line => {
+        if (line.includes('IMAGE_BASE64:')) {
+            hasImage = true;
+            const parts = line.split('IMAGE_BASE64:');
+            
+            // Clean quotes, backslashes, and linebreaks
+            let base64Str = parts[1].trim().replace(/^['"]|['"]$/g, '').replace(/\\n/g, '').strip?.() || parts[1].trim();
+            
+            if (chartContainer && base64Str.length > 50) {
+                const imgCard = document.createElement('div');
+                imgCard.className = "w-full bg-slate-950 border border-slate-800 p-2 rounded-lg shadow mb-3";
+
+                const img = document.createElement('img');
+                img.src = `data:image/png;base64,${base64Str}`;
+                img.className = "w-full h-auto rounded border border-slate-700/50";
+                img.alt = "Generated Visualization";
+
+                imgCard.appendChild(img);
+                chartContainer.appendChild(imgCard);
+            }
+        } else {
+            if (line.trim().length > 0) {
+                cleanLogs.push(line);
+            }
+        }
+    });
+
+    // 3. Display Text Execution Logs
+    if (logsOutput) {
+        logsOutput.innerText = cleanLogs.length > 0 
+            ? cleanLogs.join('\n').trim() 
+            : '# Execution completed successfully.';
+    }
+
+    // 4. Toggle Visualization Card Visibility
+    if (visualizationCard) {
+        if (hasImage) {
+            visualizationCard.classList.remove('hidden');
+        } else {
+            visualizationCard.classList.add('hidden');
+        }
+    }
+}
+
+
+    async function downloadCode(format) {
+    const codeElement = document.getElementById('codeOutput');
+    const codeText = codeElement ? codeElement.innerText : '';
+
+    if (!codeText || codeText.startsWith('# Code output will display') || codeText.startsWith('# Generating')) {
+        alert("Pehle workflow run karke python code generate hone dein!");
+        return;
+    }
+
+    const endpoint = format === 'notebook' ? '/api/export/notebook' : '/api/export/python';
+    const extension = format === 'notebook' ? 'ipynb' : 'py';
+
+    try {
+        const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: codeText, filename: 'autonomous_ds_pipeline' })
+        });
+
+        if (!res.ok) throw new Error("Export request failed");
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `autonomous_ds_pipeline.${extension}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+    } catch (err) {
+        alert("Download error: " + err.message);
+    }
+}
+
+
+
+// Base64 Regex Extraction & Render Handler
+function renderVisualizationsFromLogs(logsText) {
+    const vizCard = document.getElementById("visualizationCard");
+    const chartContainer = document.getElementById("chartContainer");
+
+    if (!chartContainer || !vizCard) {
+        console.error("Visualization container or card element missing!");
+        return;
+    }
+
+    // Reset container content
+    chartContainer.innerHTML = "";
+
+    // Regex to match IMAGE_BASE64 output strings
+    const regex = /IMAGE_BASE64:([A-Za-z0-9+/=]+)/g;
+    let match;
+    let count = 0;
+
+    while ((match = regex.exec(logsText)) !== null) {
+        const b64Data = match[1].trim();
+        if (b64Data.length > 50) {
+            const imgWrapper = document.createElement("div");
+            imgWrapper.className = "w-full bg-slate-950 border border-slate-800 p-3 rounded-lg flex flex-col items-center shadow";
+
+            const title = document.createElement("p");
+            title.className = "text-xs text-slate-400 font-mono self-start mb-2";
+            title.innerText = `Plot #${count + 1}`;
+
+            const img = document.createElement("img");
+            img.src = `data:image/png;base64,${b64Data}`;
+            img.className = "max-w-full h-auto rounded border border-slate-700/50";
+
+            imgWrapper.appendChild(title);
+            imgWrapper.appendChild(img);
+            chartContainer.appendChild(imgWrapper);
+            count++;
+        }
+    }
+
+    // If base64 images found, unhide the card
+    if (count > 0) {
+        vizCard.classList.remove("hidden");
+    } else {
+        vizCard.classList.add("hidden");
+    }
+}
+
+
+
+async function downloadPdfReport() {
+    const filename = currentFilename || "employee_records.csv";
+    const question = document.getElementById("queryInput")?.value || "";
+    const generatedCode = document.getElementById("codeOutput")?.innerText || "";
+    let executionLogs = document.getElementById("logsOutput")?.innerText || "";
+
+    // DOM ke chartContainer se saare <img> tags ke src (Base64) read karke text me format ke sath append karein
+    const chartImgs = document.querySelectorAll("#chartContainer img");
+    chartImgs.forEach(img => {
+        if (img.src) {
+            let b64Data = "";
+            if (img.src.includes("base64,")) {
+                b64Data = img.src.split("base64,")[1];
+            } else {
+                b64Data = img.src;
+            }
+            executionLogs += `\nIMAGE_BASE64:${b64Data.trim()}\n`;
+        }
+    });
+
+    const formData = new FormData();
+    formData.append("filename", filename);
+    formData.append("question", question);
+    formData.append("generated_code", generatedCode);
+    formData.append("execution_output", executionLogs);
+
+    try {
+        const response = await fetch("/api/report/generate", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const mediaType = response.headers.get("content-type") || "";
+            const isHtml = mediaType.includes("text/html");
+            
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Report_${filename.replace('.csv', '')}.${isHtml ? 'html' : 'pdf'}`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } else {
+            alert("Failed to generate report.");
+        }
+    } catch (err) {
+        console.error("Report download error:", err);
+    }
+}
+</script>
+   
+</body>
+</html>

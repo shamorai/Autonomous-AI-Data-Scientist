@@ -1,0 +1,6 @@
+Employee_ID,Employee_Name,Department,Age,Salary,Sales_Target_Achieved,Performance_Rating,Churn_Risk
+101,Aarav Sharma,Sales,28,45000.0,Yes,4.2,No
+102,Riya Verma,Marketing,34,62000.0,No,3.5,Yes
+103,Karan Patel,Sales,45,85000.0,Yes,4.8,No
+104,Neha Gupta,Finance,29,52000.0,Yes,3.9,No
+105,Vikram Singh,Marketing,41,71000.0,No,2.8,Yes
