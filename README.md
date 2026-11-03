@@ -6,7 +6,7 @@
 
 ## 📋 Overview
 
-The **Autonomous AI Data Scientist** is a full-stack, agentic platform engineered to automate raw data analysis, machine learning model training, and executive reporting without human intervention.
+The **Autonomous AI Data Scientist** is a full-stack, agentic platform engineered to automate raw data analysis, machine learning model training, and executive reporting without human intervention. 
 
 Given a raw CSV dataset and an analytical query, the system dynamically plans the execution, writes clean Python code, runs it inside an isolated **E2B MicroVM Sandbox**, evaluates model metrics (Confusion Matrix, SHAP plots), and exports modular artifacts (`.py` scripts, `.ipynb` notebooks, and interactive HTML executive reports).
 
@@ -15,20 +15,17 @@ Given a raw CSV dataset and an analytical query, the system dynamically plans th
 ## 🎯 Key Features
 
 ### 🧠 Autonomous Code Execution & Agentic Workflow
-
 * **E2B MicroVM Sandbox Integration**: Runs untrusted dynamic Python code in an isolated containerized environment for high-security code execution.
 * **Dynamic Query-to-Code Pipeline**: Translates complex NLP queries into clean Data Science pipelines (Pandas, Scikit-learn, XGBoost, LightGBM).
 * **Automated Artifact Export**: Automatically outputs reproducible `.py` scripts, Jupyter Notebooks (`.ipynb`), and serialized models (`.joblib`).
 
 ### 📊 Advanced Diagnostics & Explainability (XAI)
-
 * **Automated ML Pipelines**: Preprocessing, categorical encoding, feature scaling, and AutoML classification/regression.
 * **Model Diagnostics**: Computes Confusion Matrices, Classification Reports, and performance metrics.
 * **Explainable AI (SHAP)**: Generates base64-encoded SHAP feature importance charts to explain model predictions visually.
 * **Executive HTML Reporting**: Generates sleek, standalone executive summary reports with embedded visualizations and execution logs.
 
 ### ⚡ Enterprise Production Architecture
-
 * **FastAPI Backend**: Async, high-throughput REST API endpoints.
 * **Dockerized Microservice**: Containerized setup ready for single-command orchestration via `docker-compose`.
 * **Render Deployment**: Cloud-hosted backend infrastructure ensuring seamless availability.
@@ -76,6 +73,7 @@ Given a raw CSV dataset and an analytical query, the system dynamically plans th
 
 ## 📦 Project Structure
 
+```text
 Autonomous-AI-Data-Scientist/
 ├── app/                               # Core Application Package
 │   ├── agents/                        # Specialized Autonomous Agents
@@ -123,6 +121,9 @@ Autonomous-AI-Data-Scientist/
 ├── LICENSE                            # MIT License
 └── README.md                          # Project Documentation
 
+```
+
+---
 
 ## 🔌 API Endpoints
 
@@ -149,9 +150,9 @@ Executes end-to-end data analysis, trains ML models inside the sandbox, and gene
     "confusion_matrix_shape": [10, 10]
   },
   "artifacts": {
-    "python_script": "/static/exports/pipeline.py",
-    "jupyter_notebook": "/static/exports/pipeline.ipynb",
-    "executive_report": "/static/exports/report.html"
+    "python_script": "/data/reports/pipeline.py",
+    "jupyter_notebook": "/data/reports/pipeline.ipynb",
+    "executive_report": "/data/reports/report.html"
   }
 }
 
@@ -191,7 +192,7 @@ HOST=0.0.0.0
 
 ```bash
 # Clone the repository
-git clone https://github.com/shamorai/Autonomous-AI-Data-Scientist.git
+git clone [https://github.com/shamorai/Autonomous-AI-Data-Scientist.git](https://github.com/shamorai/Autonomous-AI-Data-Scientist.git)
 cd Autonomous-AI-Data-Scientist
 
 # Create virtual environment using uv
@@ -207,7 +208,7 @@ uv pip install -r requirements.txt
 
 ```bash
 # Start FastAPI Server
-python -m uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 ```
 
@@ -275,3 +276,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 * 🐙 **GitHub**: [@shamorai](https://www.google.com/search?q=https://github.com/shamorai)
 * 💼 **LinkedIn**: [Dev Upadhyay](https://www.google.com/search?q=https://www.linkedin.com/in/dev-upadhyay-9966002a1/)
+
+```
+
+```
