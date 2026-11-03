@@ -76,30 +76,53 @@ Given a raw CSV dataset and an analytical query, the system dynamically plans th
 
 ## 📦 Project Structure
 
-```text
 Autonomous-AI-Data-Scientist/
-├── src/                               # Core Application Source Code
-│   ├── main.py                        # FastAPI Application Entry Point
-│   ├── api/                           # API Route Controllers
-│   │   └── routes.py                  # Endpoints for execution & report generation
-│   ├── core/                          # Core System Configurations & Logging
-│   │   ├── config.py                  # Environment setup
-│   │   └── logger.py                  # Structured application logging
-│   ├── agent/                         # Agent Logic & Prompt Orchestration
-│   │   ├── planner.py                 # LLM Code Planner
-│   │   └── executor.py                # E2B Sandbox Execution Client
-│   ├── templates/                     # Executive HTML Report Templates
-│   └── utils/                         # Code Converters (.py -> .ipynb) & Utilities
+├── app/                               # Core Application Package
+│   ├── agents/                        # Specialized Autonomous Agents
+│   │   ├── ml_agent.py                # AutoML, diagnostics & SHAP generation agent
+│   │   ├── python_agent.py            # Sandbox code synthesis & validation agent
+│   │   └── sql_agent.py               # Data querying & SQL translation agent
+│   │
+│   ├── graph/                         # LangGraph Workflow & State Management
+│   │   └── workflow.py                # State graph orchestration & node routing
+│   │
+│   ├── services/                      # Business & Execution Engine Services
+│   │   ├── profiler.py                # Automated EDA & dataset profiling service
+│   │   ├── report_gen.py              # Dynamic HTML/Jinja2 report compiler
+│   │   └── sandbox.py                 # Isolated E2B MicroVM execution manager
+│   │
+│   ├── routers/                       # FastAPI Route Controllers
+│   │   └── export.py                  # API endpoints for pipeline & report exports
+│   │
+│   ├── schemas/                       # Pydantic Schemas & Data Validation
+│   │   ├── agent.py                   # Agent payload & response schemas
+│   │   ├── ml.py                      # Model evaluation & metrics data models
+│   │   ├── profile.py                 # Profiling output schemas
+│   │   ├── sandbox.py                 # Sandbox execution state models
+│   │   └── state.py                   # LangGraph global state schema
+│   │
+│   ├── templates/                     # Executive Report Templates
+│   │   ├── index.html                 # Dashboard base template
+│   │   └── report.html                # Executive summary report layout
+│   │
+│   └── exports/                       # Compiled Artifact Outputs
+│       └── Report_employee_records.html
 │
-├── static/                            # Exported Artifacts & Generated Reports
+├── data/                              # Data Persistence Layer
+│   ├── uploads/                       # Raw input CSV datasets
+│   ├── models/                        # Serialized ML model artifacts (.joblib)
+│   └── reports/                       # Generated HTML/PDF executive reports
+│
+├── test/                              # Suite for Unit & Integration Tests
+│   └── test_workflow.py               # Automated tests for LangGraph execution & node routing
+│
+├── main.py                            # FastAPI Application Entry Point
 ├── Dockerfile                         # Production Container Spec
-├── docker-compose.yml                 # Multi-container Orchestration
-├── requirements.txt                   # Python Dependencies
+├── docker-compose.yml                 # Multi-container Microservice Setup
+├── requirements.txt                   # Project Dependencies
+├── LICENSE                            # MIT License
 └── README.md                          # Project Documentation
 
-```
-
----
 
 ## 🔌 API Endpoints
 
